@@ -158,15 +158,17 @@ for i in $(seq 0 7); do
     echo "CREATE FOREIGN TABLE IF NOT EXISTS public.postgres_log_$i () INHERITS (public.postgres_log) SERVER pglog
     OPTIONS (filename '../pg_log/postgresql-$i.csv', format 'csv', header 'false');
 GRANT SELECT ON public.postgres_log_$i TO admin;
-
-CREATE OR REPLACE VIEW public.failed_authentication_$i WITH (security_barrier) AS
-SELECT *
-  FROM public.postgres_log_$i
- WHERE command_tag = 'authentication'
-   AND error_severity = 'FATAL';
-ALTER VIEW public.failed_authentication_$i OWNER TO postgres;
-GRANT SELECT ON TABLE public.failed_authentication_$i TO robot_zmon;
 "
+
+# // remove postgres_log view
+#CREATE OR REPLACE VIEW public.failed_authentication_$i WITH (security_barrier) AS
+#SELECT *
+#  FROM public.postgres_log_$i
+# WHERE command_tag = 'authentication'
+#   AND error_severity = 'FATAL';
+#ALTER VIEW public.failed_authentication_$i OWNER TO postgres;
+#GRANT SELECT ON TABLE public.failed_authentication_$i TO robot_zmon;
+
 done
 
 cat _zmon_schema.dump
